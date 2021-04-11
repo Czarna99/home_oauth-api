@@ -2,7 +2,7 @@ package errors
 
 import "net/http"
 
-var error []string
+
 
 type RestErr struct {
 	Message []string `json:"message"`
