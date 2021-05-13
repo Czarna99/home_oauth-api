@@ -1,10 +1,10 @@
 package app
 
 import (
-	"github.com/Pawelek242/home_oauth-api/src/clients/cassandra"
-	"github.com/Pawelek242/home_oauth-api/src/domain/access_token"
 	"github.com/Pawelek242/home_oauth-api/src/http"
 	"github.com/Pawelek242/home_oauth-api/src/repository/db"
+	"github.com/Pawelek242/home_oauth-api/src/repository/rest"
+	"github.com/Pawelek242/home_oauth-api/src/services/access_token"
 	"github.com/gin-gonic/gin"
 )
 
@@ -13,14 +13,11 @@ var (
 )
 
 func StartApplication() {
-	session := cassandra.GetSession()
-	//if dbErr != nil {
-	//	panic(dbErr)
-	//	}
-	session.Close()
-	atHandler := http.NewHandler(access_token.NewService(db.NewRepository()))
+	atHandler := http.NewAccessTokenHandler(
+		access_token.NewService(rest.NewRestUsersRepository(), db.NewRepository()))
 
 	router.GET("/oauth/access_token/:access_token_id", atHandler.GetById)
 	router.POST("/oauth/access_token", atHandler.Create)
+
 	router.Run(":8080")
 }
